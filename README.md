@@ -2,6 +2,10 @@
 
 A simple, modern frontend web application that integrates with n8n workflows to automate email sending using natural language instructions.
 
+![emailautomation](https://github.com/user-attachments/assets/1d08600a-7399-4de0-8b06-4c0d49557101)
+![workflow](https://github.com/user-attachments/assets/86919154-3450-40f7-aa59-c206a16c9ab3)
+
+
 ## 🚀 Features
 
 - **Natural Language Input**: Type instructions like "Send an email to john@example.com about that I am ill and won't be coming to work today"
