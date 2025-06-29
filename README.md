@@ -328,8 +328,3 @@ Found an issue or want to improve the workflow?
 - **Report bugs**: Create an issue on GitHub
 - **Suggest features**: Submit a feature request
 - **Contribute code**: Fork and create a pull request
-
----
-
-**Ready to automate your emails?** 
-👉 **[Copy the workflow JSON](#-n8n-workflow-json)** above and import it to your n8n instance to get started! 🎉 
