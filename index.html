@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Automation - n8n Integration</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📧 Email Automation</h1>
+            <p>Send professional emails with AI assistance</p>
+        </header>
+
+        <main>
+            <div class="form-section">
+                <div class="input-group">
+                    <label for="recipientEmail">Recipient Email Address</label>
+                    <input 
+                        type="email" 
+                        id="recipientEmail" 
+                        placeholder="example@domain.com"
+                        required
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label for="emailContent">Email Content</label>
+                    <textarea 
+                        id="emailContent" 
+                        placeholder="Type your message here... Example: I am ill and I won't be coming to work today."
+                        rows="4"
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="webhook-config">
+                    <label for="webhookUrl">n8n Webhook URL</label>
+                    <input 
+                        type="url" 
+                        id="webhookUrl" 
+                        placeholder="https://your-workspace.n8n.cloud/webhook/send-email"
+                        value=""
+                    >
+                </div>
+
+                <button id="sendBtn" class="send-button">
+                    <span class="button-text">Send Email</span>
+                    <span class="spinner" style="display: none;">⏳</span>
+                </button>
+            </div>
+
+            <div class="status-section">
+                <div id="status" class="status-message"></div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by n8n workflow automation</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
