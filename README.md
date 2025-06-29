@@ -27,14 +27,14 @@ A simple, modern frontend web application that integrates with n8n workflows to 
 
 ### 1. Import the n8n Workflow
 
-**Option A: One-Click Import (Recommended)**
-👉 **[Import Workflow to n8n](https://n8n.io/workflows/[YOUR_WORKFLOW_ID])** 
-
-**Option B: Manual Import**
-1. Copy this workflow JSON: **[GitHub Workflow File](https://github.com/your-username/Automatic-Email-Sender/blob/main/n8n-email-automation-workflow.json)**
-2. Go to your n8n instance → Import → Paste JSON
-3. Configure your email credentials (Gmail/SMTP)
-4. Activate the workflow
+**Copy from README (Easy Setup)**
+1. **Copy the workflow JSON** from the [Workflow JSON](#-n8n-workflow-json) section below
+2. **Go to your n8n instance** → Import → Paste JSON
+3. **Configure your credentials:**
+   - OpenAI API key (or use n8n free credits)
+   - Gmail OAuth2 authentication
+4. **Activate the workflow**
+5. **Copy your webhook URL** from the Webhook node
 
 ### 2. Use the Application
 
@@ -136,6 +136,188 @@ The n8n workflow includes:
 - **Gmail/SMTP Node**: Sends the processed email
 - **Response Node**: Returns success/error status
 
+## 📋 n8n Workflow JSON
+
+Copy the entire JSON below and paste it into your n8n instance (Import → Paste JSON):
+
+<details>
+<summary><strong>📋 Click to expand workflow JSON</strong></summary>
+
+```json
+{
+  "name": "Email Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "send-email",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9eb45f87-3f37-4f49-83c5-b8145ce0c090",
+      "name": "Webhook",
+      "webhookId": "e62f96c0-5f18-4804-8930-f34b9c4695e4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.text }}",
+        "options": {
+          "systemMessage": "You are an email automation assistant. When you receive a natural language email request, you should:\n\n1. Parse the request to extract the recipient email address\n2. Generate an appropriate subject line  \n3. Create a professional email body\n4. Use the Gmail tool to send the email\n\nIMPORTANT: You have access to a Gmail tool. Use it to send emails with these parameters:\n- to: (recipient email address)\n- subject: (generated subject line)\n- message: (professional email body)\n\nExamples:\nInput: \"Send an email to boss@company.com that I'm running late\"\nAction: Use Gmail tool with:\n- to: boss@company.com\n- subject: \"Running Late Today\" \n- message: \"Dear Boss,\\n\\nI wanted to let you know that I am running late today. I apologize for any inconvenience this may cause.\\n\\nBest regards\"\n\nAlways confirm when the email has been sent successfully."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "7d1a8d0f-c8de-44c1-b5b5-884557507f12",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        200
+      ],
+      "id": "97ae2a99-5f42-4167-ac43-fd82b3b9fa8f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "qsrVNzLhHX2N3yvV",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to send emails. The AI will provide these parameters:\n- to: recipient email address (required)\n- subject: email subject line (required) \n- message: email body content (required)\n\nAlways extract the recipient email from the user's natural language request and generate appropriate professional subject lines and email content.",
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        380,
+        200
+      ],
+      "id": "f427c998-c979-441a-8a3a-88bcf4270f50",
+      "name": "Gmail",
+      "webhookId": "e71d5788-0f59-422f-a0e7-b048ad6fea2c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XXJLD3Frts3yb7hZ",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"message\": \"{{ $json.output }}\",\n  \"agent_response\": \"Email processed and sent successfully\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        580,
+        0
+      ],
+      "id": "0a196a8c-1885-4e04-a73e-6fe0215df07c",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cd2044ed-fd89-4fc3-a585-2c6892123a1e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d3718f0add37847c7ebb776760910702017bd6f9f4200df4f3e137c6af82926a"
+  },
+  "id": "Yz7AMjSHjUYy7u88",
+  "tags": []
+}
+```
+
+</details>
+
+### 🔧 After Import Setup:
+
+1. **Configure OpenAI credentials** (or use the free n8n credits)
+2. **Set up Gmail OAuth2** authentication 
+3. **Activate the workflow**
+4. **Copy the webhook URL** from the Webhook node
+5. **Test with your frontend application**
+
 ## 🤝 Contributing
 
 Found an issue or want to improve the workflow?
@@ -146,4 +328,4 @@ Found an issue or want to improve the workflow?
 ---
 
 **Ready to automate your emails?** 
-👉 **[Import the n8n Workflow](https://n8n.io/workflows/[YOUR_WORKFLOW_ID])** and start sending emails with AI! 🎉 
+👉 **[Copy the workflow JSON](#-n8n-workflow-json)** above and import it to your n8n instance to get started! 🎉 
